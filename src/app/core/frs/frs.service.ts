@@ -24,7 +24,7 @@ export class FrsService {
   public getFrsList(): Observable<FrsModel[]> {
     const request = new Request({
       method: RequestMethod.Get,
-      url: "api/frs/getfrslist",
+      url: "api/frs/get-frs-list",
     });
 
     return this.requestHandler.request(request).pipe(
