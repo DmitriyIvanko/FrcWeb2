@@ -2,4 +2,5 @@ Admin Page
 <div *ngFor="let frs of frsList$ | async">
   <div>{{ frs.mnemonicDescription }}</div>
   <div>{{ frs.createdDT }}</div>
+  <button (click)="onTestSystemClick(frs.faceRecognitionSystemId)">TestSystem</button>
 </div>

@@ -7,29 +7,29 @@ import {
   RequestMethod,
 } from "@angular/http";
 
-import { FrsMapper } from "./frs.mapper";
-import { FrsModel } from "./frs.model";
+import { DatabaseTestUserMapper } from "./database-test-user.mapper";
+import { DatabaseTestUserModel } from "./database-test-user.model";
 import { RequestHandler } from "../request/request.handler";
 
 @Injectable()
-export class FrsService {
-  private frsMapper: FrsMapper;
+export class DatabaseTestUserService {
+  private mapper: DatabaseTestUserMapper;
 
   constructor(
     private requestHandler: RequestHandler,
   ) {
-    this.frsMapper = new FrsMapper();
+    this.mapper = new DatabaseTestUserMapper();
   }
 
-  public getFrsList(): Observable<FrsModel[]> {
+  public getList(frsId: string): Observable<DatabaseTestUserModel[]> {
     const request = new Request({
       method: RequestMethod.Get,
-      url: "api/frs/get-frs-list",
+      url: `api/databasetestuser/get-list/?frsId=${frsId}`,
     });
 
     return this.requestHandler.request(request).pipe(
       map((response) => {
-        return this.frsMapper.mapCollectionToClient(response);
+        return this.mapper.mapCollectionToClient(response);
       }));
   }
 }

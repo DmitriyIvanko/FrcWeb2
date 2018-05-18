@@ -7,12 +7,14 @@ import {
 
 import { RequestModule } from "./request/request.module";
 import { FrsModule } from "./frs";
+import { DatabaseTestUserModule } from "./database-test-user";
 
 @NgModule({
   imports: [
     RequestModule,
     CommonModule,
     FrsModule,
+    DatabaseTestUserModule,
   ]
 })
 export class CoreModule {

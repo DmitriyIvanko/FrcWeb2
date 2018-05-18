@@ -8,6 +8,7 @@ import {
   FrsService,
   FrsModel,
 } from "../core";
+import { TestService } from "./test";
 
 @Component({
   selector: "ab-admin",
@@ -19,9 +20,14 @@ export class AdminComponent implements OnInit {
 
   constructor(
     private frsService: FrsService,
+    private testService: TestService,
   ) { }
 
   public ngOnInit(): void {
     this.frsList$ = this.frsService.getFrsList();
+  }
+
+  public onTestSystemClick(frsId: string): void {
+    this.testService.startTestFrs(frsId);
   }
 }
