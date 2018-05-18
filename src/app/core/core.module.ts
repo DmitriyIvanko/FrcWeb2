@@ -8,6 +8,7 @@ import {
 import { RequestModule } from "./request/request.module";
 import { FrsModule } from "./frs";
 import { DatabaseTestUserModule } from "./database-test-user";
+import { ImageModule } from "./image";
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { DatabaseTestUserModule } from "./database-test-user";
     CommonModule,
     FrsModule,
     DatabaseTestUserModule,
+    ImageModule,
   ]
 })
 export class CoreModule {

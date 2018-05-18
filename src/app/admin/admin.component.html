@@ -3,4 +3,5 @@ Admin Page
   <div>{{ frs.mnemonicDescription }}</div>
   <div>{{ frs.createdDT }}</div>
   <button (click)="onTestSystemClick(frs.faceRecognitionSystemId)">TestSystem</button>
+  <img alt="some" [src]="image$ | async" />
 </div>
