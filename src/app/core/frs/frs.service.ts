@@ -7,18 +7,26 @@ import {
   RequestMethod,
 } from "@angular/http";
 
+import { RequestHandler } from "../request/request.handler";
 import { FrsMapper } from "./frs.mapper";
 import { FrsModel } from "./frs.model";
-import { RequestHandler } from "../request/request.handler";
+import { RecognizeItemMapper } from "./recognize-item.mapper";
+import { RecognizeItemModel } from "./recognize-item.model";
+import { UserModel } from "./user.model";
+import { UserMapper } from "./user.mapper";
 
 @Injectable()
 export class FrsService {
   private frsMapper: FrsMapper;
+  private recognizeItemMapper: RecognizeItemMapper;
+  private userMapper: UserMapper;
 
   constructor(
     private requestHandler: RequestHandler,
   ) {
     this.frsMapper = new FrsMapper();
+    this.recognizeItemMapper = new RecognizeItemMapper();
+    this.userMapper = new UserMapper();
   }
 
   public getFrsList(): Observable<FrsModel[]> {
@@ -31,5 +39,27 @@ export class FrsService {
       map((response) => {
         return this.frsMapper.mapCollectionToClient(response);
       }));
+  }
+
+  public recognize(recognizeItem: RecognizeItemModel): Observable<UserModel> {
+    const request = new Request({
+      method: RequestMethod.Post,
+      url: "api/frs/recognize",
+      body: this.recognizeItemMapper.transformToServer(recognizeItem),
+    });
+
+    return this.requestHandler.request(request).pipe(
+      map((response) => {
+        return this.userMapper.mapInstanceToClient(response);
+      }));
+  }
+
+  public connection(): Observable<any> {
+    const request = new Request({
+      method: RequestMethod.Get,
+      url: "api/test/ping",
+    });
+
+    return this.requestHandler.request(request);
   }
 }

@@ -12,4 +12,3 @@ export class ImageMapper extends MapperModel<ImageModel, any> {
     });
   }
 }
-

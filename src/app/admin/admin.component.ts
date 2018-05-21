@@ -41,4 +41,10 @@ export class AdminComponent implements OnInit {
   public onTestSystemClick(frsId: string): void {
     this.testService.startTestFrs(frsId);
   }
+
+  public onTestClick(): void {
+    this.frsService.connection().subscribe((item) => {
+      alert(item);
+    });
+  }
 }

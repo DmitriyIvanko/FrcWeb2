@@ -7,4 +7,6 @@ import { TestService } from "./test.service";
     TestService,
   ]
 })
-export class TestModule { }
+export class TestModule {
+  
+}

@@ -1,6 +1,8 @@
 export {
   FrsService,
   FrsModel,
+  RecognizeItemModel,
+  UserModel,
 } from "./frs";
 export {
   DatabaseTestUserService,
