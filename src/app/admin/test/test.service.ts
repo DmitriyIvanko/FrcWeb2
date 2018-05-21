@@ -56,11 +56,6 @@ export class TestService {
         this.indexMax = databaseTestUserList.length;
         this.testNext();
       }));
-    // .subscribe((resultList) => {
-    //   this.imageService.get(resultList[0].imageId).subscribe((image) => {
-    //     debugger;
-    //     alert(image);
-    //   })
   }
 
   private testNext(): void {

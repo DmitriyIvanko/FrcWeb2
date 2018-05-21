@@ -9,7 +9,10 @@ import {
   FrsModel,
   ImageService,
 } from "../core";
-import { TestService } from "./test";
+import {
+  TestService,
+  TestOnClientService,
+} from "./test";
 import { map } from "rxjs/operators";
 
 @Component({
@@ -24,6 +27,7 @@ export class AdminComponent implements OnInit {
   constructor(
     private frsService: FrsService,
     private testService: TestService,
+    private testOnClientService: TestOnClientService,
     private imageService: ImageService,
   ) { }
 
@@ -40,6 +44,10 @@ export class AdminComponent implements OnInit {
 
   public onTestSystemClick(frsId: string): void {
     this.testService.startTestFrs(frsId);
+  }
+
+  public onTestOnClientSystemClick(frsId: string): void {
+    this.testOnClientService.getParamFrs(frsId);
   }
 
   public onTestClick(): void {

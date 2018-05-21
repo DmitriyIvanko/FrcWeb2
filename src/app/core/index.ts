@@ -1,6 +1,7 @@
 export {
   FrsService,
   FrsModel,
+  FrsParameterModel,
   RecognizeItemModel,
   UserModel,
 } from "./frs";

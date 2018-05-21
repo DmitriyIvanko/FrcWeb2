@@ -8,6 +8,8 @@ import {
 } from "@angular/http";
 
 import { RequestHandler } from "../request/request.handler";
+import { FrsParameterMapper } from "./frs-parameter.mapper";
+import { FrsParameterModel } from "./frs-parameter.model";
 import { FrsMapper } from "./frs.mapper";
 import { FrsModel } from "./frs.model";
 import { RecognizeItemMapper } from "./recognize-item.mapper";
@@ -18,6 +20,7 @@ import { UserMapper } from "./user.mapper";
 @Injectable()
 export class FrsService {
   private frsMapper: FrsMapper;
+  private frsParameterMapper: FrsParameterMapper;
   private recognizeItemMapper: RecognizeItemMapper;
   private userMapper: UserMapper;
 
@@ -25,6 +28,7 @@ export class FrsService {
     private requestHandler: RequestHandler,
   ) {
     this.frsMapper = new FrsMapper();
+    this.frsParameterMapper = new FrsParameterMapper();
     this.recognizeItemMapper = new RecognizeItemMapper();
     this.userMapper = new UserMapper();
   }
@@ -38,6 +42,18 @@ export class FrsService {
     return this.requestHandler.request(request).pipe(
       map((response) => {
         return this.frsMapper.mapCollectionToClient(response);
+      }));
+  }
+
+  public getFrsParamenter(frsId: string): Observable<FrsParameterModel> {
+    const request = new Request({
+      method: RequestMethod.Get,
+      url: `api/frs/get-frs-parameter/?frsId=${frsId}`,
+    });
+
+    return this.requestHandler.request(request).pipe(
+      map((response) => {
+        return this.frsParameterMapper.mapInstanceToClient(response);
       }));
   }
 
