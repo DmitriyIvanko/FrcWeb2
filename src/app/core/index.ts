@@ -3,6 +3,7 @@ export {
   FrsModel,
   FrsParameterModel,
   RecognizeItemModel,
+  RecognizeFeatureModel,
   UserModel,
 } from "./frs";
 export {

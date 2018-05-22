@@ -22,6 +22,7 @@ import {
   ImageService,
   ImageModel,
   RecognizeItemModel,
+  RecognizeFeatureModel,
   UserModel,
   FrsParameterModel,
 } from "../../core";
@@ -42,7 +43,9 @@ export class TestOnClientService {
   private endDtList: Date[] = [];
   private correctList: number[] = [];
   private frsParameter: FrsParameterModel;
-  private frsAverageMatrix: math.Matrix;
+  private frsAverageMatrix: any;
+  private frsLeftMatrix: any;
+  private frsRightMatrix: any;
   // end kind of store:
 
   private subscription: Subscription;
@@ -64,6 +67,9 @@ export class TestOnClientService {
     this.subscription.add(
       this.frsService.getFrsParamenter(frsId).subscribe((frsParameter) => {
         this.frsParameter = frsParameter;
+        this.frsAverageMatrix = this.math.transpose(this.arrayToTwoDimArray(frsParameter.amValue.split(",").map(x => +x), frsParameter.amDimentionTwo, frsParameter.amDimentionOne));
+        this.frsLeftMatrix = this.math.transpose(this.arrayToTwoDimArray(frsParameter.lmValue.split(",").map(x => +x), frsParameter.lmDimentionTwo, frsParameter.lmDimentionOne));
+        this.frsRightMatrix = this.math.transpose(this.arrayToTwoDimArray(frsParameter.rmValue.split(",").map(x => +x), frsParameter.rmDimentionTwo, frsParameter.rmDimentionOne));
         this.startTestFrs();
       }));
   }
@@ -79,28 +85,39 @@ export class TestOnClientService {
   }
 
   private testNext(): void {
-
-
     this.imageService.get(this.databaseTestUserList[this.indexCurrent].imageId)
       .subscribe((image) => {
         this.startDtList[this.indexCurrent] = new Date();
+        let res = this.convertDataURIToBinary(image.imageByteArray);
+        let imageJpeg = this.jpeg.decodeJPEG(res);
+        let greyArray = this.imageJpeg2greyArray(imageJpeg);
+        let imageMatrix = this.arrayToTwoDimArray(greyArray, imageJpeg.height, imageJpeg.width);
+        let imageMatrixMinusAverageMatrix = this.math.subtract(imageMatrix, this.frsAverageMatrix);
+        let leftMatrixMultiplyimageMatrixMinusAverageMatrix = this.math.multiply(this.frsLeftMatrix, imageMatrixMinusAverageMatrix);
+        let featureMatrix = this.math.multiply(leftMatrixMultiplyimageMatrixMinusAverageMatrix, this.frsRightMatrix);
+        let featureMatrixString = this.featureMatrix2StringArray(this.math.transpose(featureMatrix));
+        const recognizeFeature = new RecognizeFeatureModel({
+          dimentionOne: featureMatrix._size[0],
+          dimentionTwo: featureMatrix._size[1],
+          featureMatrixString,
+          frsId: this.frsId,
+        });
 
-        var res = this.convertDataURIToBinary(image.imageByteArray);
-        var imageJpeg = this.jpeg.decodeJPEG(res);
-        var greyArray = this.imageJpeg2greyArray(imageJpeg);
-        var imageMatrix = this.greyArray2Matrix(greyArray);
-        debugger;
-        this.calcFeature(image);
-        // const recognizeItem = new RecognizeItemModel({
-        //   frsId: this.frsId,
-        //   imageByteArray: image.imageByteArray,
-        // });
-        // this.frsService.recognize(recognizeItem).subscribe((user) => {
-        //   this.endDtList[this.indexCurrent] = new Date();
-        //   this.correctList[this.indexCurrent] = user.userId === image.userId ? 1 : 0;
-        //   this.increment();
-        // });
+        this.frsService.recognizeByFeature(recognizeFeature).subscribe((user) => {
+          this.endDtList[this.indexCurrent] = new Date();
+          this.correctList[this.indexCurrent] = user.userId === image.userId ? 1 : 0;
+          this.increment();
+        })
       });
+  }
+
+  private featureMatrix2StringArray(featureMatrix: any): string {
+    let result = [];
+    // to do: не очень круто использовать закрытые переменные:
+    for (let i = 0; i < featureMatrix._size[0]; i++) {
+      result[i] = (featureMatrix._data[i] as number[]).join(",");
+    }
+    return result.join(",");
   }
 
   private imageJpeg2greyArray(imageJpeg: any): number[] {
@@ -113,19 +130,15 @@ export class TestOnClientService {
     return result;
   }
 
-  private greyArray2Matrix(greyArray: number[]): any {
+  private arrayToTwoDimArray(greyArray: number[], height: number, width: number): number[][] {
     let matrixArray: number[][] = [];
-    for (let i = 0; i < 112; i++) {
+    for (let i = 0; i < height; i++) {
       matrixArray[i] = [];
-      for (let j = 0; j < 92; j++) {
-        matrixArray[i][j] = greyArray[i * 92 + j];
+      for (let j = 0; j < width; j++) {
+        matrixArray[i][j] = greyArray[i * width + j];
      }
     }
-    return this.math.transpose(this.math.matrix(matrixArray));
-  }
-
-  private calcFeature(image: ImageModel): void {
-
+    return this.math.matrix(matrixArray);
   }
 
   private convertDataURIToBinary(dataURI) {
@@ -150,7 +163,6 @@ export class TestOnClientService {
       for (let i = 0; i < this.indexMax; i++) {
         result[i] = this.endDtList[i].getTime() - this.startDtList[i].getTime();
       }
-      debugger;
 
       const totalMs = result.reduce((a, b) => a + b, 0);
       alert("correct/total: " + performance + ". Total ms: " + totalMs);
