@@ -52,6 +52,8 @@ export class TestOnClientService {
   public jpeg: any; // to do: add typings;
   public math: any;
 
+  public log: Date[] = [];
+
   constructor(
     private databaseTestUserService: DatabaseTestUserService,
     private imageService: ImageService,
@@ -88,22 +90,41 @@ export class TestOnClientService {
     this.imageService.get(this.databaseTestUserList[this.indexCurrent].imageId)
       .subscribe((image) => {
         this.startDtList[this.indexCurrent] = new Date();
-        let res = this.convertDataURIToBinary(image.imageByteArray);
-        let imageJpeg = this.jpeg.decodeJPEG(res);
-        let greyArray = this.imageJpeg2greyArray(imageJpeg);
-        let imageMatrix = this.arrayToTwoDimArray(greyArray, imageJpeg.height, imageJpeg.width);
-        let imageMatrixMinusAverageMatrix = this.math.subtract(imageMatrix, this.frsAverageMatrix);
-        let leftMatrixMultiplyimageMatrixMinusAverageMatrix = this.math.multiply(this.frsLeftMatrix, imageMatrixMinusAverageMatrix);
-        let featureMatrix = this.math.multiply(leftMatrixMultiplyimageMatrixMinusAverageMatrix, this.frsRightMatrix);
-        let featureMatrixString = this.featureMatrix2StringArray(this.math.transpose(featureMatrix));
+        this.log.push(new Date());
+        let res = this.convertDataURIToBinary(image.imageByteArray); // 1
+        this.log.push(new Date());
+        let imageJpeg = this.jpeg.decodeJPEG(res); // 2
+        this.log.push(new Date());
+        let greyArray = this.imageJpeg2greyArray(imageJpeg); // 3 
+        this.log.push(new Date());
+        let imageMatrix = this.arrayToTwoDimArray(greyArray, imageJpeg.height, imageJpeg.width); // 4
+        this.log.push(new Date());
+        let imageMatrixMinusAverageMatrix = this.math.subtract(imageMatrix, this.frsAverageMatrix); // 5
+        this.log.push(new Date());
+        let leftMatrixMultiplyimageMatrixMinusAverageMatrix = this.math.multiply(this.frsLeftMatrix, imageMatrixMinusAverageMatrix); //6 
+        this.log.push(new Date());
+        let featureMatrix = this.math.multiply(leftMatrixMultiplyimageMatrixMinusAverageMatrix, this.frsRightMatrix); // 7
+        this.log.push(new Date());
+        let featureMatrixString = this.featureMatrix2StringArray(this.math.transpose(featureMatrix)); // 8
+        this.log.push(new Date());
+        
         const recognizeFeature = new RecognizeFeatureModel({
           dimentionOne: featureMatrix._size[0],
           dimentionTwo: featureMatrix._size[1],
           featureMatrixString,
           frsId: this.frsId,
         });
-
+        this.log.push(new Date());
         this.frsService.recognizeByFeature(recognizeFeature).subscribe((user) => {
+          // this.log.push(new Date());
+          // var result = "";
+          // this.log.forEach((date, index) => {
+          //   if (index !== 0) {
+          //     var time = date.getTime() - this.log[index - 1].getTime();
+          //     result = result + time + ",";
+          //   }
+          // });
+          // alert(result);
           this.endDtList[this.indexCurrent] = new Date();
           this.correctList[this.indexCurrent] = user.userId === image.userId ? 1 : 0;
           this.increment();

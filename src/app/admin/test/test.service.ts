@@ -70,6 +70,14 @@ export class TestService {
           this.endDtList[this.indexCurrent] = new Date();
           this.correctList[this.indexCurrent] = user.userId === image.userId ? 1 : 0;
           this.increment();
+
+          // const result = [];
+          // for (let i = 0; i < this.endDtList.length; i++) {
+          //   result[i] = this.endDtList[i].getTime() - this.startDtList[i].getTime();
+          // }
+          // 
+          // const totalMs = result.reduce((a, b) => a + b, 0);
+          // alert("correct/total: " + performance + ". Total ms: " + totalMs);
         });
       });
   }
