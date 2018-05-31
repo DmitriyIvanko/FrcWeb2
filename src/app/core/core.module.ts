@@ -9,6 +9,7 @@ import { RequestModule } from "./request/request.module";
 import { FrsModule } from "./frs";
 import { DatabaseTestUserModule } from "./database-test-user";
 import { ImageModule } from "./image";
+import { PingModule } from "./ping";
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { ImageModule } from "./image";
     FrsModule,
     DatabaseTestUserModule,
     ImageModule,
+    PingModule,
   ]
 })
 export class CoreModule {

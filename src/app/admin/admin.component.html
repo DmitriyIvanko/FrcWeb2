@@ -5,5 +5,14 @@ Admin Page
   <button (click)="onTestSystemClick(frs.faceRecognitionSystemId)">TestSystem</button>
   <!--<img alt="some" [src]="image$ | async" />-->
   <button (click)="onTestOnClientSystemClick(frs.faceRecognitionSystemId)">Test On Client System</button>
+  <input [(ngModel)]="systemEtalonCount" />
 </div>
 <button (click)="onTestClick()">Connection</button>
+<hr />
+<button (click)="onPingSimpleClick()">Ping Simple</button>
+<button (click)="onPingWith100KBClick()">Ping with 100KB</button>
+<button (click)="onPingWith500KBClick()">Ping with 500KB</button>
+<button (click)="onPingWith750KBClick()">Ping with 750KB</button>
+<button (click)="onPingWith1MBClick()">Ping with 1MB</button>
+<button (click)="onPingWith1a5MBClick()">Ping with 1.5MB</button>
+<button (click)="onPingWith2MBClick()">Ping with 2MB</button>

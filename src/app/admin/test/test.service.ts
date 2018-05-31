@@ -34,6 +34,7 @@ export class TestService {
   private startDtList: Date[] = [];
   private endDtList: Date[] = [];
   private correctList: number[] = [];
+  private systemEtalonCount: number;
   // end kind of store:
 
   private subscription: Subscription;
@@ -46,8 +47,9 @@ export class TestService {
     this.subscription = new Subscription();
   }
 
-  public startTestFrs(frsId: string): void {
+  public startTestFrs(frsId: string, systemEtalonCount: number): void {
     this.frsId = frsId;
+    this.systemEtalonCount = systemEtalonCount;
 
     this.subscription.add(
       this.databaseTestUserService.getList(frsId).subscribe((databaseTestUserList) => {
@@ -65,6 +67,7 @@ export class TestService {
         const recognizeItem = new RecognizeItemModel({
           frsId: this.frsId,
           imageByteArray: image.imageByteArray,
+          systemEtalonCount: this.systemEtalonCount,
         });
         this.frsService.recognize(recognizeItem).subscribe((user) => {
           this.endDtList[this.indexCurrent] = new Date();
@@ -90,7 +93,6 @@ export class TestService {
       for (let i = 0; i < this.indexMax; i++) {
         result[i] = this.endDtList[i].getTime() - this.startDtList[i].getTime();
       }
-      debugger;
 
       const totalMs = result.reduce((a, b) => a + b, 0);
       alert("correct/total: " + performance + ". Total ms: " + totalMs);

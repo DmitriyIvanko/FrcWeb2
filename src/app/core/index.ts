@@ -14,4 +14,8 @@ export {
   ImageService,
   ImageModel,
 } from "./image";
+export {
+  PingModel,
+  PingService,
+} from "./ping";
 export { CoreModule } from "./core.module";
